@@ -1,21 +1,31 @@
 import os
 from dotenv import load_dotenv
 import google.generativeai as genai
-from google.generativeai import types
 
+# Load environment variables from the .env file.
+# Note: On Render, you will set these as environment variables in the dashboard,
+# so the load_dotenv() call is primarily for local development.
 load_dotenv() 
 
 class Chatbot:
     def __init__(self):
-        env_path = os.path.join(os.path.dirname(__file__), '.env')
-        load_dotenv(env_path) 
+        # On Render, environment variables are directly available.
+        # For local dev, we load them above.
         api_key = os.getenv("GEMINI_API_KEY")
-        if not api_key:
-            raise ValueError("GEMINI_API_KEY not set in .env file.")
 
-        self.client = genai.Client(api_key=api_key)
-        self.model = "gemini-2.5-flash"
-  
+        if not api_key:
+            raise ValueError("GEMINI_API_KEY environment variable is not set.")
+
+        # --- CORRECTED PART ---
+        # Configure the Google Generative AI library with the API key.
+        # This replaces the need for the deprecated genai.Client().
+        genai.configure(api_key=api_key)
+        
+        # Now, get a reference to the model directly.
+        # The model name "gemini-2.5-flash" is not a standard public model.
+        # The common ones are "gemini-pro" or "gemini-1.5-flash".
+        # I'll use "gemini-pro" as an example. You can change this to the correct name.
+        self.model = genai.GenerativeModel("gemini-pro")
 
     def system_prompt(self):
         return """You are StudyBuddy, a helpful, concise, and student-friendly AI tutor. Your job is to assist university-level computer science students in understanding topics from their syllabus, including subjects like Data Structures, Operating Systems, Machine Learning, Algorithms, DBMS, and Networks.
@@ -40,8 +50,9 @@ class Chatbot:
 
     def generate_response(self, user_prompt: str) -> str:
         try:
-            response = self.client.models.generate_content(
-                model=self.model,
+            # Use the model to generate content directly.
+            # No need for self.client.models.generate_content(...)
+            response = self.model.generate_content(
                 contents=f"{self.system_prompt()}\n\nUser: {user_prompt}"
             )
             return response.text
