@@ -32,6 +32,3 @@ async def chat(request: ChatRequest):
     reply = bot.generate_response(request.prompt)
     return {"response": reply}
 
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
