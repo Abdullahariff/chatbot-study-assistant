@@ -3,6 +3,10 @@ import requests
 import json
 from datetime import datetime
 
+# --- CORRECTED PART: DEFINE BACKEND URL ---
+# Use the actual Render URL for your FastAPI service
+BACKEND_URL = "https://chatbot-study-assistant.onrender.com"
+
 # Page configuration
 st.set_page_config(
     page_title="StudyBuddy - AI Tutor",
@@ -192,7 +196,8 @@ if 'api_status' not in st.session_state:
 # Function to check API health
 def check_api_health():
     try:
-        response = requests.get("http://localhost:8000/health", timeout=3)
+        # Use the correct backend URL
+        response = requests.get(f"{BACKEND_URL}/health", timeout=3)
         if response.status_code == 200:
             st.session_state.api_status = "online"
             return True
@@ -206,8 +211,9 @@ def check_api_health():
 # Function to send message to API
 def send_message(message):
     try:
+        # Use the correct backend URL
         response = requests.post(
-            "http://localhost:8000/chat",
+            f"{BACKEND_URL}/chat",
             json={"prompt": message},
             timeout=30
         )
@@ -300,18 +306,24 @@ with col2:
     
     with col_btn1:
         if st.button("📚 Explain Topic"):
-            user_input = "Explain binary search with code"
-            send_button = True
+            st.session_state.last_button_prompt = "Explain binary search with code"
+            st.rerun()
     
     with col_btn2:
         if st.button("❓ Take Quiz"):
-            user_input = "Give me a quiz on data structures"
-            send_button = True
+            st.session_state.last_button_prompt = "Give me a quiz on data structures"
+            st.rerun()
     
     with col_btn3:
         if st.button("💡 Study Tips"):
-            user_input = "Give me study tips for algorithms"
-            send_button = True
+            st.session_state.last_button_prompt = "Give me study tips for algorithms"
+            st.rerun()
+    
+    # Check if a button was clicked and trigger the logic
+    if "last_button_prompt" in st.session_state and st.session_state.last_button_prompt:
+        user_input = st.session_state.last_button_prompt
+        del st.session_state.last_button_prompt # Clear the prompt
+        send_button = True
     
     st.markdown('</div>', unsafe_allow_html=True)
 
