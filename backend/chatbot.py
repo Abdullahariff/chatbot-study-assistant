@@ -25,7 +25,7 @@ class Chatbot:
         # The model name "gemini-2.5-flash" is not a standard public model.
         # The common ones are "gemini-pro" or "gemini-1.5-flash".
         # I'll use "gemini-pro" as an example. You can change this to the correct name.
-        self.model = genai.GenerativeModel("gemini-pro")
+        self.model = genai.GenerativeModel("gemini-1.5-flash")
 
     def system_prompt(self):
         return """You are StudyBuddy, a helpful, concise, and student-friendly AI tutor. Your job is to assist university-level computer science students in understanding topics from their syllabus, including subjects like Data Structures, Operating Systems, Machine Learning, Algorithms, DBMS, and Networks.
