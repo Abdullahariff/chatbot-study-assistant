@@ -6,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from backend.chatbot import Chatbot
 
+# Initialize the FastAPI app and your Chatbot
 app = FastAPI()
 bot = Chatbot()
 
@@ -18,7 +19,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ✅ Health check endpoint (ADD THIS)
+# ✅ ADDED: Root endpoint for basic health check and accessibility
+@app.get("/")
+async def root():
+    return {"status": "ok", "message": "StudyBuddy API is running."}
+
+# ✅ Health check endpoint (This is a good practice as well)
 @app.get("/health")
 async def health_check():
     return {"status": "healthy", "service": "StudyBuddy API"}
@@ -31,4 +37,3 @@ class ChatRequest(BaseModel):
 async def chat(request: ChatRequest):
     reply = bot.generate_response(request.prompt)
     return {"response": reply}
-
